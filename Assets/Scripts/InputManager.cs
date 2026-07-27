@@ -39,7 +39,17 @@ public class InputManager : MonoBehaviour
     {
         return _playerControls.Player.Look.ReadValue<Vector2>();
     }
+    
+    public bool PlayerInteractThisFrame()
+    {
+        return _playerControls.Player.Interact.triggered;
+    }
 
+    public bool PlayerInteractHeld()
+    {
+        return _playerControls.Player.Interact.ReadValue<float>() > 0;
+    }
+    
     public bool PlayerJumpThisFrame()
     {
         return _playerControls.Player.Jump.triggered;
