@@ -45,13 +45,13 @@ public class PlayerController : MonoBehaviour
         if ( _groundedPlayer )
             Debug.Log("Is Grounded");
         
-        if (_inputManager.PlayerJumpThisFrame() && _groundedPlayer)
+        if (_inputManager.PlayerJumpThisFrame())
         {
             _playerVelocity.y = Mathf.Sqrt(jumpHeight * -2f * gravityValue);
             Debug.Log("JUMP");
         }
 
-        _playerVelocity.y += gravityValue * Time.deltaTime;
+        //_playerVelocity.y += gravityValue * Time.deltaTime;
         _controller.Move(_playerVelocity * Time.deltaTime);
     }
 }
