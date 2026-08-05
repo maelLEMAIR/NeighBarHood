@@ -42,7 +42,7 @@ public class InputManager : MonoBehaviour
     
     public bool PlayerInteractThisFrame()
     {
-        return _playerControls.Player.Interact.triggered;
+        return _playerControls.Player.Interact.IsPressed();
     }
 
     public bool PlayerInteractHeld()
@@ -50,8 +50,13 @@ public class InputManager : MonoBehaviour
         return _playerControls.Player.Interact.ReadValue<float>() > 0;
     }
     
+    public bool PlayerSprint()
+    {
+        return _playerControls.Player.Sprint.IsPressed();
+    }
+    
     public bool PlayerJumpThisFrame()
     {
-        return _playerControls.Player.Jump.triggered;
+        return _playerControls.Player.Jump.IsPressed();
     }
 }

@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float playerSpeed = 5.0f;
     [SerializeField]
+    private float playerSprintSpeed = 10.0f;
+    [SerializeField]
     private float jumpHeight = 1.5f;
     [SerializeField]
     private float gravityValue = -9.81f;
@@ -34,11 +36,19 @@ public class PlayerController : MonoBehaviour
 
         Vector2 movement = _inputManager.GetPlayerMovement();
         Vector3 move = transform.right * movement.x + transform.forward * movement.y;
-        _controller.Move(move * (playerSpeed * Time.deltaTime));
+        
+        if (_inputManager.PlayerSprint())
+            _controller.Move(move * (playerSprintSpeed * Time.deltaTime));
+        else
+             _controller.Move(move * (playerSpeed * Time.deltaTime));
 
+        if ( _groundedPlayer )
+            Debug.Log("Is Grounded");
+        
         if (_inputManager.PlayerJumpThisFrame() && _groundedPlayer)
         {
             _playerVelocity.y = Mathf.Sqrt(jumpHeight * -2f * gravityValue);
+            Debug.Log("JUMP");
         }
 
         _playerVelocity.y += gravityValue * Time.deltaTime;

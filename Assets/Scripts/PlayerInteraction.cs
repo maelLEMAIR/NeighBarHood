@@ -1,69 +1,69 @@
+using System;
 using UnityEngine;
+using TMPro;
 
 public class PlayerInteraction : MonoBehaviour
-{ 
-    public float playerReach = 3.0f;
-    private Interactable _currentInteractable;
-
-    public Transform cameraTransform;
+{
+    [SerializeField] private float range = 5.0f;
+    [SerializeField] private LayerMask layerMask;
     
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void CheckInteraction()
+    
+    [SerializeField] private TMP_Text interactionText;
+    
+    public Transform cameraTransform;
+    private InputManager _inputManager;
+    
+    private IInteractable _currentInteractable;
+    
+    private void Start()
     {
-        
+        _inputManager = InputManager.Instance;
+    }
+
+    private void Update()
+    {
+        HandleRaycasting();
+    }
+
+    private void HandleRaycasting()
+    {
         RaycastHit hit;
-        Ray ray = new Ray(cameraTransform.position, cameraTransform.forward);
-
-        if (Physics.Raycast(ray, out hit, playerReach))
+        if (!Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, range, layerMask))
         {
-            Debug.DrawRay(ray.origin, ray.direction * playerReach, Physics.Raycast(ray, out hit, playerReach) ? Color.green : Color.red);
-            if (hit.collider.CompareTag("Interactable"))
+            if (_currentInteractable != null)
             {
-                Interactable newInteractable = hit.collider.GetComponent<Interactable>();
-
-                if (_currentInteractable && newInteractable != _currentInteractable)
-                {
-                    _currentInteractable.DisableOutLine();
-                }
-                
-                if (newInteractable.enabled)
-                {
-                    SetNewCurrentInteractable(newInteractable);
-                }
-                else
-                {
-                    DisableCurrentInteractable();
-                }
+                _currentInteractable.OnRelease();
+                _currentInteractable = null;
             }
-            else
+            
+            interactionText.text = "";
+            return;
+        }
+
+        if (!hit.collider.TryGetComponent(out IInteractable interactable))
+        {
+            interactionText.text = "";
+            return;
+        }
+        
+        if ( _currentInteractable != null)
+        {
+            if (interactable != _currentInteractable)
             {
-                DisableCurrentInteractable();
+                _currentInteractable.OnRelease();
+                _currentInteractable = interactable;
             }
         }
         else
         {
-            DisableCurrentInteractable();
+            _currentInteractable = interactable;
+            _currentInteractable.OnHit();
         }
-    }
-
-    void SetNewCurrentInteractable(Interactable interactable)
-    {
-        _currentInteractable = interactable;
-        _currentInteractable.EnableOutLine();
-    }
-    
-    void DisableCurrentInteractable()
-    {
-        if (_currentInteractable)
-        {
-            _currentInteractable.DisableOutLine();
-            _currentInteractable = null;
-        }
-    }
-    
-    // Update is called once per frame
-    void Update()
-    {
-        CheckInteraction();
+        
+        interactionText.text = interactable.InteractionText;
+        
+        if (_inputManager.PlayerInteractThisFrame())
+            interactable.Interact();
+        
     }
 }
