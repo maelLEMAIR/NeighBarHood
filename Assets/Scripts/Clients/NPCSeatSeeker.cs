@@ -12,14 +12,23 @@ public class NPCSeatSeeker : MonoBehaviour
     private ChairSlot targetChair;
     private Transform exitTarget;
 
-    public  enum SeekState { Wandering, WalkingToChair, Sitting, Leaving }
+    public Transform playerTransform;
+
+    public enum SeekState
+    {
+        Wandering, 
+        WalkingToChair, 
+        Sitting, 
+        WaitingOrderToBeTaken, 
+        WaitingHisOrder, 
+        EvaluateHisOrder, 
+        Leaving
+    }
     private SeekState state = SeekState.Wandering;
 
     [Header("Balade")]
-    public float wanderRadius = 10f;
-    public float wanderInterval = 4f;
-    private float wanderTimer;
     private int wanderAreaMask;
+    private Transform currentWanderPoint;
 
     [Header("Temps avant de vouloir s'asseoir")]
     public float minTimeBeforeSitting = 8f;
@@ -31,7 +40,10 @@ public class NPCSeatSeeker : MonoBehaviour
     public float minSitTime = 5f;
     public float maxSitTime = 20f;
     private float sitTimer;
-
+    
+    [Header("Order")] 
+    public GameObject thinkSprite;
+    
     public SeekState GetState() { return state; }
 
     private void Awake()
@@ -45,8 +57,6 @@ public class NPCSeatSeeker : MonoBehaviour
 
     void Start()
     {
-        agent.avoidancePriority = Random.Range(0, 99);
-
         int noWanderMask = 1 << NavMesh.GetAreaFromName("NoWander");
         wanderAreaMask = NavMesh.AllAreas & ~noWanderMask;
         agent.areaMask = wanderAreaMask;
@@ -71,16 +81,23 @@ public class NPCSeatSeeker : MonoBehaviour
                 break;
 
             case SeekState.Sitting:
-                sitTimer -= Time.deltaTime;
-                if (sitTimer <= 0f)
-                {
-                    StandUp();
-                }
+                ChooseHisOrder();
                 break;
 
+            case SeekState.WaitingOrderToBeTaken:
+                if ( thinkSprite.activeSelf )
+                {
+                    thinkSprite.transform.LookAt(playerTransform);
+                }
+                break;
+            
+            case SeekState.WaitingHisOrder:
+                break;
+            
+            case SeekState.EvaluateHisOrder:
+                break;
+            
             case SeekState.Leaving:
-                // Rien à faire ici : c'est ExitZone (trigger) qui appelle Despawn()
-                // quand le PNJ atteint physiquement la zone de sortie.
                 break;
         }
     }
@@ -100,8 +117,7 @@ public class NPCSeatSeeker : MonoBehaviour
             }
         }
 
-        wanderTimer -= Time.deltaTime;
-        if (wanderTimer <= 0f || (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance))
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
             PickNewWanderPoint();
         }
@@ -109,16 +125,22 @@ public class NPCSeatSeeker : MonoBehaviour
 
     public void PickNewWanderPoint()
     {
-        Vector3 randomPoint = transform.position + Random.insideUnitSphere * wanderRadius;
-        randomPoint.y = transform.position.y;
-        
-        if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, wanderRadius, wanderAreaMask))
+        if (WanderPointManager.Instance == null)
         {
-            agent.SetDestination(hit.position);
-            state = SeekState.Wandering;
+            Debug.LogWarning("WanderPointManager introuvable !");
+            return;
         }
+        
+        Transform point = WanderPointManager.Instance.GetRandomPointExcluding(currentWanderPoint);
 
-        wanderTimer = wanderInterval;
+        if (point != null)
+        {
+            currentWanderPoint = point;
+
+            if (NavMesh.SamplePosition(point.position, out NavMeshHit hit, 1f, wanderAreaMask))
+                agent.SetDestination(hit.position);
+            
+        }
     }
 
     // ---------- CHAISE ----------
@@ -143,22 +165,35 @@ public class NPCSeatSeeker : MonoBehaviour
     void SitDown()
     {
         agent.isStopped = true;
-        transform.position.Set(
-            targetChair.seatPoint.position.x, 
-            targetChair.seatPoint.localScale.y / 2.0f + transform.localScale.y / 2.0f, 
-            targetChair.seatPoint.position.z);
+        agent.enabled = false;
         
+        Vector3 seatPos = new Vector3(
+            targetChair.seatPoint.position.x,
+            targetChair.seatPoint.position.y + targetChair.seatPoint.localScale.y + transform.localScale.y,
+            targetChair.seatPoint.position.z
+        );
+
+        transform.position = seatPos; 
         transform.rotation = targetChair.seatPoint.rotation;
         targetChair.Occupy(gameObject);
-
-        // le PNJ devient un obstacle une fois assis
-        agent.enabled = false;      // NavMeshAgent et NavMeshObstacle ne peuvent pas être actifs en même temps
+        
         obstacle.enabled = true;
 
         sitTimer = Random.Range(minSitTime, maxSitTime);
         state = SeekState.Sitting;
     }
 
+    void ChooseHisOrder()
+    {
+        sitTimer -=  Time.deltaTime;
+        if (sitTimer <= 0f)
+        {
+            // Prendre la commande dans l'itemManager (un ou plusieurs item)
+            state = SeekState.WaitingOrderToBeTaken;
+            thinkSprite.SetActive(true);
+        }
+    }
+    
     public void StandUp()
     {
         if (targetChair != null)

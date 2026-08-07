@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dfa48a4a4b947dbb8d4be45c45e4d72, type: 3}
+  m_Name: ShooterOfJager
+  m_EditorClassIdentifier: Assembly-CSharp::ItemRecipeSO1
+  recipeName: 
+  recipeType: 0
+  input:
+  - item: {fileID: 11400000, guid: b253caf8a7c2774418984e3db79d0e8b, type: 2}
+    amount: 1
+  - item: {fileID: 11400000, guid: ba0112be1dd26a64592188347bd67f59, type: 2}
+    amount: 2
+  output:
+  - item: {fileID: 11400000, guid: e396146aeba80294f936e5faf2915c49, type: 2}
+    amount: 1
