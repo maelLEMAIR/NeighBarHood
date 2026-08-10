@@ -16,3 +16,5 @@ MonoBehaviour:
   icon: {fileID: 0}
   prefab: {fileID: 0}
   unitType: 1
+  finalStat: 0
+  type: 0

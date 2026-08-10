@@ -10,4 +10,5 @@ public interface IInteractable
     public void OnRelease();
     
     public string InteractionText { get; }    
+    public bool IsActive { get; }
 }

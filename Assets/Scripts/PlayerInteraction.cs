@@ -28,42 +28,30 @@ public class PlayerInteraction : MonoBehaviour
     private void HandleRaycasting()
     {
         RaycastHit hit;
-        if (!Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, range, layerMask))
+        if (!Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, range, layerMask)
+            || !hit.collider.TryGetComponent(out IInteractable interactable)
+            || !interactable.IsActive)
         {
             if (_currentInteractable != null)
             {
                 _currentInteractable.OnRelease();
                 _currentInteractable = null;
             }
-            
+
             interactionText.text = "";
             return;
         }
 
-        if (!hit.collider.TryGetComponent(out IInteractable interactable))
+        if (interactable != _currentInteractable)
         {
-            interactionText.text = "";
-            return;
-        }
-        
-        if ( _currentInteractable != null)
-        {
-            if (interactable != _currentInteractable)
-            {
-                _currentInteractable.OnRelease();
-                _currentInteractable = interactable;
-            }
-        }
-        else
-        {
+            _currentInteractable?.OnRelease();
             _currentInteractable = interactable;
             _currentInteractable.OnHit();
         }
-        
+
         interactionText.text = interactable.InteractionText;
-        
+
         if (_inputManager.PlayerInteractThisFrame())
             interactable.Interact();
-        
     }
 }

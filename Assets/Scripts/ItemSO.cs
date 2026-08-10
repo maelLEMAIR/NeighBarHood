@@ -7,7 +7,11 @@ public class ItemSO : ScriptableObject
     public Sprite icon;
     public GameObject prefab;
     public UnitType unitType;
+    public bool finalStat;
+    public ItemType type;
 }
+
+public enum ItemType { Cocktail, Snack, Beer }
 
 public enum UnitType
 {

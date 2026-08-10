@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
@@ -11,6 +13,7 @@ public class NPCSeatSeeker : MonoBehaviour
     private NavMeshObstacle obstacle;
     private ChairSlot targetChair;
     private Transform exitTarget;
+    private InteractableClient _interactableClient;
 
     public Transform playerTransform;
 
@@ -43,6 +46,8 @@ public class NPCSeatSeeker : MonoBehaviour
     
     [Header("Order")] 
     public GameObject thinkSprite;
+    private ItemManager _itemManager;
+    public List<ItemSO> _order;
     
     public SeekState GetState() { return state; }
 
@@ -53,20 +58,28 @@ public class NPCSeatSeeker : MonoBehaviour
         obstacle = GetComponent<NavMeshObstacle>();
         obstacle.carving = true;
         obstacle.enabled = false;
+        
+        _interactableClient = GetComponent<InteractableClient>();
+        _interactableClient.enabled = false;
     }
 
     void Start()
     {
+        _itemManager = ItemManager.Instance;
+        
         int noWanderMask = 1 << NavMesh.GetAreaFromName("NoWander");
         wanderAreaMask = NavMesh.AllAreas & ~noWanderMask;
         agent.areaMask = wanderAreaMask;
 
+            
         sitDesireTimer = Random.Range(minTimeBeforeSitting, maxTimeBeforeSitting);
         PickNewWanderPoint();
     }
 
     void Update()
     {
+        if ( _itemManager == null)
+            Debug.LogError("ItemManager not found");
         switch (state)
         {
             case SeekState.Wandering:
@@ -188,9 +201,18 @@ public class NPCSeatSeeker : MonoBehaviour
         sitTimer -=  Time.deltaTime;
         if (sitTimer <= 0f)
         {
-            // Prendre la commande dans l'itemManager (un ou plusieurs item)
+            int chance = Random.Range(0, 100);
+            if ( chance <50)
+                _order.Add(_itemManager.GetRandomItem(ItemType.Beer));
+            else if ( chance <=80 )
+                _order.Add(_itemManager.GetRandomItem(ItemType.Snack));
+            else
+                _order.Add(_itemManager.GetRandomItem(ItemType.Cocktail));
+            
+            Debug.Log(_order[0]);
             state = SeekState.WaitingOrderToBeTaken;
             thinkSprite.SetActive(true);
+            _interactableClient.enabled = true;
         }
     }
     
@@ -205,6 +227,8 @@ public class NPCSeatSeeker : MonoBehaviour
         obstacle.enabled = false;
         agent.enabled = true;
         agent.isStopped = false;
+        
+        _interactableClient.enabled = false;
 
         GoToExit();
     }

@@ -39,4 +39,5 @@ public class TestInteractable : MonoBehaviour, IInteractable
     }
     
     public string InteractionText { get { return InteractText;  }  }
+    public bool IsActive => isActiveAndEnabled;
 }

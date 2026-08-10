@@ -15,4 +15,6 @@ MonoBehaviour:
   nameItem: 
   icon: {fileID: 0}
   prefab: {fileID: 0}
-  stackMax: 0
+  unitType: 0
+  finalStat: 1
+  type: 0
