@@ -25,6 +25,9 @@ public class CameraHandler : MonoBehaviour
 
     private void Update()
     {
+        if (TrayScript.IsInventoryOpen)
+            return;
+
         Vector2 mouseInput = _inputManager.GetMouseDelta() * _sensitivity;
 
         _xRotation -= mouseInput.y;
@@ -32,5 +35,6 @@ public class CameraHandler : MonoBehaviour
 
         transform.localRotation = Quaternion.Euler(_xRotation, 0f, 0f);
         playerBody.Rotate(Vector3.up * mouseInput.x);
+        
     }
 }

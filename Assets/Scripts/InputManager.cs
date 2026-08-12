@@ -42,17 +42,27 @@ public class InputManager : MonoBehaviour
     
     public bool PlayerInteractThisFrame()
     {
-        return _playerControls.Player.Interact.IsPressed();
+        return _playerControls.Player.Interact.WasPressedThisFrame();
+    }
+    
+    public bool PlayerUseInventoryKeyThisFrame()
+    {
+        return _playerControls.Player.Inventory.WasPressedThisFrame();
     }
 
     public bool PlayerInteractHeld()
     {
-        return _playerControls.Player.Interact.ReadValue<float>() > 0;
+        return _playerControls.Player.Interact.IsPressed();
     }
     
     public bool PlayerSprint()
     {
         return _playerControls.Player.Sprint.IsPressed();
+    }
+    
+    public bool PlayerDropThisFrame()
+    {
+        return _playerControls.Player.Drop.WasPressedThisFrame();
     }
     
     public bool PlayerJumpThisFrame()

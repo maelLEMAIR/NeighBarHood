@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0181df590016f6b43a4302784e0125e4, type: 3}
+  m_Name: Schoppe
+  m_EditorClassIdentifier: Assembly-CSharp::ItemSO
+  nameItem: Schoppe
+  icon: {fileID: 21300000, guid: b9e222b431d6dec42963e6b1bca458ed, type: 3}
+  prefab: {fileID: 7345412364960801652, guid: e6d1eab0210e8f34fa7509ced4c47248, type: 3}
+  unitType: 0
+  finalStat: 0
+  type: 0

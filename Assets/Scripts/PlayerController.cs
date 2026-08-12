@@ -28,6 +28,9 @@ public class PlayerController : MonoBehaviour
     }
     void Update()
     {
+        if (TrayScript.IsInventoryOpen)
+            return;
+        
         _groundedPlayer = _controller.isGrounded;
         if (_groundedPlayer && _playerVelocity.y < 0)
         {

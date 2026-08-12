@@ -1,48 +1,52 @@
 using UnityEngine;
 
-public class TrayScript : MonoBehaviour, IInteractable
+public class TrayScript : MonoBehaviour
 {
-    [SerializeField] private string InteractText = "[E] to take";
+    public static bool IsInventoryOpen { get; private set; }
+    public static bool PlayerHasTray { get; private set; }
+
+    public GameObject inventoryUI;
+    public bool playerHasTray = false;
+
+    private bool _isInventoryOpen = false;
+    private InputManager _inputManager;
+    private Rigidbody _rigidbody;
     
-    private Outline _outline;
-
-    public Transform parentToAttach;
-
-    private void Start()
+    void Start()
     {
-        _outline = GetComponent<Outline>();
-        DisableOutLine();
+        _inputManager = InputManager.Instance;
     }
 
-    public void DisableOutLine()
+    void Update()
     {
-        _outline.enabled = false;
-    }
-    
-    public void EnableOutLine()
+        if (playerHasTray)
+        {
+            if (_inputManager.PlayerUseInventoryKeyThisFrame())
+            {
+                _isInventoryOpen = !_isInventoryOpen;
+                inventoryUI.SetActive(_isInventoryOpen);
+
+                if (_isInventoryOpen)
+                    OpenInventory();
+                else
+                    CloseInventory();
+            }
+        }
+    }   
+
+    void OpenInventory()
     {
-        _outline.enabled = true;
+        IsInventoryOpen = true;
+        Time.timeScale = 0f;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
-    public void OnHit()
+    void CloseInventory()
     {
-        EnableOutLine();
+        IsInventoryOpen = false;
+        Time.timeScale = 1f;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
-    
-    public void OnRelease()
-    {
-        DisableOutLine();
-    }
-
-    public void Interact()
-    {
-        Debug.Log("Interact with Tray");
-        transform.SetParent(parentToAttach);
-        transform.localPosition = new Vector3(0.25f, -0.4f, 0.25f);
-        transform.localRotation = Quaternion.identity;
-        this.enabled = false;
-    }
-    
-    public string InteractionText { get { return InteractText;  }  }
-    public bool IsActive => isActiveAndEnabled;
 }
