@@ -15,7 +15,6 @@ public class WanderPointManager : MonoBehaviour
             var found = FindObjectsByType<WanderPoint>(FindObjectsInactive.Exclude);
             foreach (var p in found) points.Add(p.transform);
         }
-        Debug.Log($"[WanderPointManager] {points.Count} points trouvés.");
     }
 
     public Transform GetRandomPoint()

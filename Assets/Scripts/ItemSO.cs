@@ -11,7 +11,7 @@ public class ItemSO : ScriptableObject
     public ItemType type;
 }
 
-public enum ItemType { Cocktail, Snack, Beer }
+public enum ItemType { Cocktail, Snack, Beer, Glass }
 
 public enum UnitType
 {

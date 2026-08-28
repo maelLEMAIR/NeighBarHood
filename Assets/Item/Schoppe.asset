@@ -17,4 +17,4 @@ MonoBehaviour:
   prefab: {fileID: 7345412364960801652, guid: e6d1eab0210e8f34fa7509ced4c47248, type: 3}
   unitType: 0
   finalStat: 0
-  type: 0
+  type: 3

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0181df590016f6b43a4302784e0125e4, type: 3}
   m_Name: Chips
   m_EditorClassIdentifier: Assembly-CSharp::ItemSO
-  nameItem: 
-  icon: {fileID: 0}
+  nameItem: Chips
+  icon: {fileID: 21300000, guid: d9be9286d4df7aa40b34c2958c3f2bb4, type: 3}
   prefab: {fileID: 0}
   unitType: 0
   finalStat: 1

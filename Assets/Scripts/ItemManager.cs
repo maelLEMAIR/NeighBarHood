@@ -35,6 +35,12 @@ public class ItemManager : MonoBehaviour
     
     public ItemSO GetRandomItem(ItemType type)
     {
+        if (!_items.ContainsKey(type))
+            return null;
+
+        if (_items[type].Length == 0)
+            return null;
+        
         ItemSO item = _items[type][Random.Range(0, _items[type].Length)];
         return item;
     }

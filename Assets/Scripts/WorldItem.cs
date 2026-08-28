@@ -14,8 +14,9 @@ public class WorldItem : MonoBehaviour, IInteractable
 
         if (!TrayScript.PlayerHasTray)
         {
+            Debug.Log("Player has no tray");
             transform.SetParent(Hand.Instance.gameObject.transform);
-            transform.localPosition = new Vector3(0.25f, -0.4f, 0.25f);
+            transform.localPosition = new Vector3(-0.25f, -0.4f, 0.25f);
             transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
             transform.localRotation = Quaternion.identity;
             GetComponent<BoxCollider>().isTrigger = true;
